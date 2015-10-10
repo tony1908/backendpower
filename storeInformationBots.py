@@ -5,6 +5,9 @@ from time import gmtime, strftime
 import datetime
 import pickle
 import twitter
+from numpy.lib.scimath import logn
+from math import e
+import operator
 
 #screen_name="Mujeres__Fem"
 #screen_name="MujeresFemBot"
@@ -251,12 +254,70 @@ def getTweetsMentioningPerson(screen_name):
 def readData(screen_name):
 	#pickle.dump(users, open("repliesMentioning_"+str(screen_name)+".p", "wb"))
 	users=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
+	#TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
+	#IDF(t) = log_e(Total number of documents / Number of documents with term t in it). 
+
+	idf={}
 	for u in users:
 		print u
-		#tweets=users[u]
-		#for t in tweets:
-		#	print t
 
+		tweets=users[u]
+
+		tf={}
+		totalWords=0
+		for t in tweets:
+
+			print t
+			t=t.lower()
+			words=t.split()
+			totalWords+=len(words)
+			for w in words:
+				idf.setdefault(w,{})
+				idf[w][u]=0
+				tf.setdefault(w,0)
+				tf[w]+=1
+		tfFinal={}
+		idfFinal={}
+		for w in tf:
+			value=tf[w]
+			value=float(float(value)/float(totalWords))
+			tfFinal[w]=value
+
+		for w in idf:
+			totalNumDocs=len(users)
+			numDocWithW=len(idf[w])
+			#print numDocWithW
+			w1=float(float(totalNumDocs)/float(numDocWithW))
+			#np.log(x)
+			value=logn(e, w1)
+			idfFinal[w]=value
+		tfIDF={}
+		for w in idfFinal:
+			if w in tfFinal:
+				wTF=tfFinal[w]
+			else:
+				wTF=1
+			wIDF=idfFinal[w]
+			final=wTF*wIDF
+			tfIDF[w]=final
+		#for w in tfIDF:
+		#	print w+","+str(tfIDF[w])
+		sorted_tfIDF = sorted(tfIDF.items(), key=operator.itemgetter(1), reverse=True)
+		t=0
+		for w,v in sorted_tfIDF:
+			if t<15:
+				print w
+			t+=1
+
+
+
+
+
+
+
+
+
+		print 
 
 
 	#for tweet in tweepy.Cursor(api.search,q="Mujeres__Fem",since='2015-09-01',until='2015-10-09').items():
