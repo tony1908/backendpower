@@ -23,17 +23,16 @@ botKeyInfo["Mujeres__Fem"]["C_SECRET"]="n06iH76oWL53jq26e4BZFjmArLUv5NCS7BaMANXs
 botKeyInfo["Mujeres__Fem"]["A_TOKEN"]="3754491014-p9V41yXNgZ3fwdzlkhPqJzhjmRemcYJzzCYsyMT"
 botKeyInfo["Mujeres__Fem"]["A_TOKEN_SECRET"]="PorWL4M8x2KvzooBu2TG7CPNOeT4L7aDoh8xFdY5zvoAu"
 
-
-#C_KEY = "T48gHlgfSgEFuOS76N2gy7bj9"  
-#C_SECRET = "7ntJ1xPdSxTjR2bvKVMO0flCvn0xM9AHrhg0DzY77iGnbB6Rzw"  
-#A_TOKEN = "3754637839-BcqriLQ0xS9EJzqzkz5KKZg94lsGmY8kqS2S6Rb"  
-#A_TOKEN_SECRET = "sI9YoXx6zqOdlOFgyhPTVKZ7hgqAPGwNza1FKAdyJL1pt" 
+#consumer_key = "U9BfrQUfq2ZYoUzguihU0vb1W"
+#consumer_secret = "44SvMoJhVolsaKvu1gyJStTnO7qwCOo95PHMYzsVw3HTCAvbXP"
+#access_token = "3754637839-oMtjXQaRm8X1Zh84O0vcgTqys4dNKTu94neEnVj"
+#access_token_secret = "SMwDSe95015Yk3C3rCB5sOJsdzGSv5PIMn0dEvSZhmBvG"
 
 botKeyInfo["MujeresFemBot"]={}
-botKeyInfo["MujeresFemBot"]["C_KEY"]="T48gHlgfSgEFuOS76N2gy7bj9"
-botKeyInfo["MujeresFemBot"]["C_SECRET"]="7ntJ1xPdSxTjR2bvKVMO0flCvn0xM9AHrhg0DzY77iGnbB6Rzw"
-botKeyInfo["MujeresFemBot"]["A_TOKEN"]="3754637839-BcqriLQ0xS9EJzqzkz5KKZg94lsGmY8kqS2S6Rb"
-botKeyInfo["MujeresFemBot"]["A_TOKEN_SECRET"]="sI9YoXx6zqOdlOFgyhPTVKZ7hgqAPGwNza1FKAdyJL1pt"
+botKeyInfo["MujeresFemBot"]["C_KEY"]="U9BfrQUfq2ZYoUzguihU0vb1W"
+botKeyInfo["MujeresFemBot"]["C_SECRET"]="44SvMoJhVolsaKvu1gyJStTnO7qwCOo95PHMYzsVw3HTCAvbXP"
+botKeyInfo["MujeresFemBot"]["A_TOKEN"]="3754637839-oMtjXQaRm8X1Zh84O0vcgTqys4dNKTu94neEnVj"
+botKeyInfo["MujeresFemBot"]["A_TOKEN_SECRET"]="SMwDSe95015Yk3C3rCB5sOJsdzGSv5PIMn0dEvSZhmBvG"
 
 
 
@@ -221,7 +220,7 @@ def getTweetsMentioningPerson(screen_name):
 	t=-1
 	max_tweets = 200
 	users={}
-	searched_tweets = [status for status in tweepy.Cursor(api.search, q="Mujeres__Fem").items(max_tweets)]
+	searched_tweets = [status for status in tweepy.Cursor(api.search, q=screen_name).items(max_tweets)]
 	for t in searched_tweets:
 		text=t.text.lower()
 		#print text
@@ -230,7 +229,7 @@ def getTweetsMentioningPerson(screen_name):
 		for w in words:
 			w=w.lower()
 			#print w
-			if "mujeres__fem" in w:
+			if screen_name.lower() in w:
 			#print t.text
 				#print t.user.screen_name
 				user=t.user.screen_name
@@ -244,7 +243,8 @@ def getTweetsMentioningPerson(screen_name):
 
 	for u in users:
 		#print u
-		print u+","+str(users[u])
+		print u
+		#+","+str(users[u])
 	pickle.dump(users, open("repliesMentioning_"+str(screen_name)+".p", "wb"))
 	print len(users)
 
@@ -253,9 +253,9 @@ def readData(screen_name):
 	users=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
 	for u in users:
 		print u
-		tweets=users[u]
-		for t in tweets:
-			print t
+		#tweets=users[u]
+		#for t in tweets:
+		#	print t
 
 
 
@@ -538,9 +538,9 @@ def getAllRepliesFinal(screen_name):
 	#getStatsPeopleWhoReply(screen_name)
 
 
-#screen_name="MujeresFemBot"
-screen_name="Mujeres__Fem"
-getTweetsMentioningPerson(screen_name)
+screen_name="MujeresFemBot"
+#screen_name="Mujeres__Fem"
+#getTweetsMentioningPerson(screen_name)
 readData(screen_name)
 #getTweetsMentioningPerson()
 #getTweetsMentioningPerson(screen_name)
