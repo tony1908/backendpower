@@ -251,7 +251,55 @@ def getTweetsMentioningPerson(screen_name):
 	pickle.dump(users, open("repliesMentioning_"+str(screen_name)+".p", "wb"))
 	print len(users)
 
+
+
+def clasifyContribution(tweet):
+	porrista={"seguir", "seguirme", "tuitutil", "followers"}
+	tweet=tweet.lower()
+	words=tweet.split()
+	scorePorristas=0
+	for w in words:
+		for p in porrista:
+			if p in w:
+				print "found!"+w
+				scorePorristas+=1
+	scorePorristas=float(float(scorePorristas)/float(len(words)))
+	return scorePorristas
+
+
+
+
 def readData(screen_name):
+	users=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
+	usersClasificados={}
+	userScoreClasifications={}
+	for u in users:
+		#print "Usuario:"+str(u)
+		usersClasificados.setdefault(u,{})
+		userScoreClasifications.setdefault(u,0)
+		tweets=users[u]
+		tweetsClasificados={}
+		clasificacionUser=0
+		for t in tweets:
+			scorePorristas=clasifyContribution(t)
+			userScoreClasifications[u]+=scorePorristas
+			
+			clasificacionUser+=0
+			#print "Score Porrista:"+str(scorePorristas)
+			if scorePorristas>0:
+				tweetsClasificados[t]="porristas"
+			else:
+				tweetsClasificados[t]="valido"
+		usersClasificados[u]=tweetsClasificados
+	for u in usersClasificados:
+		print u+","+str(userScoreClasifications[u])
+		tweets=usersClasificados[u]
+		for t in tweets:
+			print t+","+tweets[t]
+			#print t
+		#print
+
+def TF_IDF_Replies(screen_name):
 	#pickle.dump(users, open("repliesMentioning_"+str(screen_name)+".p", "wb"))
 	users=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
 	#TF(t) = (Number of times term t appears in a document) / (Total number of terms in the document).
@@ -602,7 +650,12 @@ def getAllRepliesFinal(screen_name):
 screen_name="MujeresFemBot"
 #screen_name="Mujeres__Fem"
 #getTweetsMentioningPerson(screen_name)
+#readData(screen_name)
+#TF_IDF_Replies(screen_name)
+
 readData(screen_name)
+
+
 #getTweetsMentioningPerson()
 #getTweetsMentioningPerson(screen_name)
 #getTweetsMentioningPerson(screen_name,1)
