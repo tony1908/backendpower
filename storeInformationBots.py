@@ -8,6 +8,7 @@ import twitter
 from numpy.lib.scimath import logn
 from math import e
 import operator
+import json
 
 #screen_name="Mujeres__Fem"
 #screen_name="MujeresFemBot"
@@ -268,8 +269,15 @@ def clasifyContribution(tweet):
 
 
 
+def testFunction(screen_name):
+	users=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
+	for username in users:
+		print username
+		tweets=users[u]
+		for t in tweets:
+			print t
 
-def readData(screen_name):
+def clasifyContributionStoreJson(screen_name):
 	users=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
 	usersClasificados={}
 	userScoreClasifications={}
@@ -291,11 +299,39 @@ def readData(screen_name):
 			else:
 				tweetsClasificados[t]="valido"
 		usersClasificados[u]=tweetsClasificados
+	
+	clasificadosFinal={}
 	for u in usersClasificados:
+		score=userScoreClasifications[u]
+		if score>0:
+			tipo="porrista"
+		else:
+			tipo="contribuitor"
+		clasificadosFinal.setdefault(tipo,{})
+
 		print u+","+str(userScoreClasifications[u])
 		tweets=usersClasificados[u]
+		clasificadosFinal[tipo][u]=tweets
 		for t in tweets:
 			print t+","+tweets[t]
+
+
+	with open('categorizedContribuitores_'+screen_name+'.json', 'w') as outfile:
+		json.dump(clasificadosFinal, outfile)
+	#for tipo in clasificadosFinal:
+	#	print tipo
+	#	users=clasificadosFinal[tipo]
+	#	for u in users:
+	#		tweets=users[u]
+	#		print u
+	#		for t in tweets:
+	#			print t+","+str(tweets[t])
+
+		#tweets=clasificadosFinal[u]
+		#for t in tweets:
+		#	print t +","+str(tweets[t])
+
+
 			#print t
 		#print
 
@@ -648,12 +684,17 @@ def getAllRepliesFinal(screen_name):
 
 
 screen_name="MujeresFemBot"
-#screen_name="Mujeres__Fem"
+clasifyContributionStoreJson(screen_name)
+
+
+
+screen_name="Mujeres__Fem"
+clasifyContributionStoreJson(screen_name)
+
 #getTweetsMentioningPerson(screen_name)
 #readData(screen_name)
 #TF_IDF_Replies(screen_name)
-
-readData(screen_name)
+#readData(screen_name)
 
 
 #getTweetsMentioningPerson()
