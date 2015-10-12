@@ -270,12 +270,21 @@ def clasifyContribution(tweet):
 
 
 def testFunction(screen_name):
-	users=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
-	for username in users:
-		print username
-		tweets=users[u]
-		for t in tweets:
-			print t
+	tipos=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
+	for tipo in tipos:
+		print tipo
+		#print username
+		#tweets=users[u]
+		#for t in tweets:
+		#	print t
+
+def getDataAnalysisPaper(screen_name):
+	print screen_name
+	#pickle.dump(clasificadosFinal, open('categorizedContribuitores_'+screen_name+'.p', "wb"))
+	clasificadosFinal=pickle.load(open('categorizedContribuitores_'+screen_name+'.p', "rb"))
+	for tipo in clasificadosFinal:
+		print tipo+","+str(len(clasificadosFinal[tipo]))
+
 
 def clasifyContributionStoreJson(screen_name):
 	users=pickle.load(open("repliesMentioning_"+str(screen_name)+".p", "rb"))
@@ -316,6 +325,7 @@ def clasifyContributionStoreJson(screen_name):
 			print t+","+tweets[t]
 
 
+	pickle.dump(clasificadosFinal, open('categorizedContribuitores_'+screen_name+'.p', "wb"))
 	with open('categorizedContribuitores_'+screen_name+'.json', 'w') as outfile:
 		json.dump(clasificadosFinal, outfile)
 	#for tipo in clasificadosFinal:
@@ -682,14 +692,17 @@ def getAllRepliesFinal(screen_name):
 	#getRepliesBot(screen_name)
 	#getStatsPeopleWhoReply(screen_name)
 
-
 screen_name="MujeresFemBot"
-clasifyContributionStoreJson(screen_name)
-
-
+getDataAnalysisPaper(screen_name)
 
 screen_name="Mujeres__Fem"
-clasifyContributionStoreJson(screen_name)
+getDataAnalysisPaper(screen_name)
+
+#screen_name="MujeresFemBot"
+#clasifyContributionStoreJson(screen_name)
+
+#screen_name="Mujeres__Fem"
+#clasifyContributionStoreJson(screen_name)
 
 #getTweetsMentioningPerson(screen_name)
 #readData(screen_name)
