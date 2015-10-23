@@ -98,6 +98,18 @@ def getClustersParticipants():
         print "Cluster:"+c+","+str(len(clusters[c]))
         for p in people:
             print p
-        print 
+        print
+    topics = {"Politics" : ["impunidad", "aristegui", "bronco", "gobierno",  "autonomia", "autoridad", "ayotzinapa", "2deoctubre", "justicia"], 
+          "Feminism" : ["feminicidios", "genero", "feminismo", "feminista", "mujer", "revolucion", "dignidad", "igualdad", "activismo"], 
+          "Technology" : ["informatica", "ingenieria", "tecnologia", "nanotecnologia", "tech"], 
+          "Health" : ["alimentacion", "medicina", "salud", "sano", "fitness", "gym", "nutricion", "ejercicio", "higiene", "energia"]}
+
+    for t in topics:
+        print t
+        words=topics[t]
+        for w in words:
+            print w
+    with open('topics.json', 'w') as outfile:
+        json.dump(topics, outfile)
 
 getClustersParticipants()
