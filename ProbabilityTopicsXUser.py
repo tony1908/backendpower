@@ -22,7 +22,7 @@ def findVectorsUsers():
 		  "Feminism" : ["feminicidios", "genero", "feminismo", "feminista", "mujer", "revolucion", "dignidad", "igualdad", "activismo"], 
 		  "Technology" : ["informatica", "ingenieria", "tecnologia", "nanotecnologia", "tech"], 
 		  "Health" : ["alimentacion", "medicina", "salud", "sano", "fitness", "gym", "nutricion", "ejercicio", "higiene", "energia"]}
-
+    biggestFrequencyTopic={}
     for u in users:
         usersVectors.setdefault(u,{})
         tweets = users[u]
@@ -60,12 +60,29 @@ def findVectorsUsers():
                     if fr.find(kw) >= 0:
                         fr_kw = fr_kw + frecuency[fr]
             print "Hashtags relativos al tema: ", fr_kw
-            p = float(fr_kw) / len(tweets)
+            #p = float(fr_kw) / len(tweets)
+            p=float(fr_kw)
+            biggestFrequencyTopic.setdefault(topic,0)
+            if p>biggestFrequencyTopic[topic]:
+                 biggestFrequencyTopic[topic]=p
+
             print "Probabilidad: %.5f" %p
             usersVectors[u][topic]=p
 
 
     print "\n\nNumero de usarios: ",len(users)
+    for topic in  biggestFrequencyTopic:
+        valueTopic=biggestFrequencyTopic[topic]
+        for u in usersVectors:
+
+            valueUserTopic=usersVectors[u][topic]
+            if not valueTopic==0:
+                valueUserTopic=float(float(valueUserTopic)/float(valueTopic))
+            usersVectors[u][topic]=valueUserTopic
+
+
+        #print "Topic:"+topic
+        #print biggestFrequencyTopic[topic]
     return usersVectors
 
 
@@ -113,3 +130,9 @@ def getClustersParticipants():
         json.dump(topics, outfile)
 
 getClustersParticipants()
+#valueUserTopic=findVectorsUsers()
+#for u in valueUserTopic:
+ #   print u
+  #  tema=valueUserTopic[u]
+   # for t in tema:
+    #    print t+","+str(tema[t])
