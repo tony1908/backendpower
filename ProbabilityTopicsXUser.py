@@ -86,7 +86,7 @@ def findVectorsUsers():
         randomInt=random.randint(0,10)
         randomInt=randomInt*.1
         print randomInt
-        usersVectors[u][topicInfluence]=randomInt
+        usersVectorsClean[u][topicInfluence]=randomInt
 
 
         #print "Topic:"+topic
@@ -97,22 +97,57 @@ def findVectorsUsers():
 
 #x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
 
-def getClustersParticipants():
+def getClustersParticipants(userCategoriesUnitedClean):
 
     valueUserTopic,usersVectorsClean=findVectorsUsers()
     clusters={}
-    for u in usersVectorsClean:
+    for u in valueUserTopic:
         print "User:"+u
-        topics=usersVectorsClean[u]
+        topics=valueUserTopic[u]
         sorted_topics = sorted(topics.items(), key=operator.itemgetter(1),reverse=True)
+        biggestTopicUserValue=0
+        biggestTopicUser="None"
+
         for t,v in sorted_topics:
-            print t +","+str(v)
-            clusters.setdefault(t,{})
-            topicsClean=valueUserTopic[u]
-            clusters[t][u]=topicsClean
-            break
-    print 
-    print
+            if not "Socialinfluence" in t:
+               
+                if float(v)>biggestTopicUserValue:
+                    biggestTopicUserValue=v
+                    biggestTopicUser=t
+                if float(v)==biggestTopicUserValue:
+                    if v>0:
+                        if not t=="Technology":
+                            biggestTopicUserValue=v
+                            biggestTopicUser=t
+
+                print "topic:"+t +","+str(v)
+                print "BIGGEST:"+biggestTopicUser+","+str(biggestTopicUserValue)
+            
+        print
+        print "BIGGEST:"+biggestTopicUser+","+str(biggestTopicUserValue)
+        print
+        clusters.setdefault(biggestTopicUser,{})
+        topicsClean=valueUserTopic[u]
+        clusters[biggestTopicUser][u]={}
+        clusters[biggestTopicUser][u]["topicsUserFinal"]=topicsClean
+        clusters[biggestTopicUser][u]["contributionsUserFinal"]=userCategoriesUnitedClean[u]
+
+
+                #print t +","+str(v)
+            #    clusters.setdefault(t,{})
+            #    topicsClean=valueUserTopic[u]
+            #    clusters[t][u]={}
+            #    clusters[t][u]["topicsUserFinal"]=topicsClean
+                #if not u in userCategoriesUnitedClean:
+                #    print "not found:"+u
+                #else:
+                #    print "foun"
+            #    clusters[t][u]["contributionsUserFinal"]=userCategoriesUnitedClean[u]
+            
+                #userCategoriesUnitedClean
+            #    break
+    #print 
+    #print
 
 
     with open('clustersColaborators.json', 'w') as outfile:
@@ -120,15 +155,36 @@ def getClustersParticipants():
 
     for c in clusters:
         print "Cluster:"+c
-        people=clusters[c]
+    #    people=clusters[c]
         print "Cluster:"+c+","+str(len(clusters[c]))
+        people=clusters[c]
         for p in people:
             print "people:"+p
-            temas=people[p]
-            for t in temas:
-                print "Tema:"+t
+            temas=people[p]["topicsUserFinal"]
+            contribuciones=people[p]["contributionsUserFinal"]["contribuitions"]
+            tipo=people[p]["contributionsUserFinal"]["typeOfContribuitor"]
+            print tipo
 
-        print
+           # Category:topicsUserFinal
+#Politics
+#Socialinfluence
+#Technology
+#Feminism
+#Health
+#Category:contributionsUserFinal
+#contribuitions
+#typeOfContribuitor
+    #        print 
+            #categorias=people[p]
+            #for c in categorias:
+            #    print "Category:"+c
+            #    detalles=categorias[c]
+            #    for d in detalles:
+            #        print d
+
+    #        print
+
+    #    print
 
     topics = {"Politics" : ["impunidad", "aristegui", "bronco", "gobierno",  "autonomia", "autoridad", "ayotzinapa", "2deoctubre", "justicia"], 
           "Feminism" : ["feminicidios", "genero", "feminismo", "feminista", "mujer", "revolucion", "dignidad", "igualdad", "activismo"], 
@@ -143,10 +199,50 @@ def getClustersParticipants():
     with open('topics.json', 'w') as outfile:
         json.dump(topics, outfile)
 
-getClustersParticipants()
-#valueUserTopic,usersVectorsClean=findVectorsUsers()
-#for u in usersVectorsClean:
-#   print u
+
+def getUsersCategories():
+    categorizedUsers = pickle.load (open ("categorizedContribuitores_Mujeres__Fem.p","rb"))
+    userCategoriesUnited={}
+    for bot in categorizedUsers:
+        print bot
+        users=categorizedUsers[bot]
+        for u in users:
+            userCategoriesUnited[u]={}
+            userCategoriesUnited[u]["typeOfContribuitor"]=bot
+            userCategoriesUnited[u]["contribuitions"]=users[u]
+    for u in userCategoriesUnited:
+        print u
+        print "type:"+userCategoriesUnited[u]["typeOfContribuitor"]
+        tweets=userCategoriesUnited[u]["contribuitions"]
+        for t in tweets:
+            print t
+    return userCategoriesUnited
+
+
+
+        #    print u
+            #+","+str(users[u])
+
+    #categorizedContribuitores_Mujeres__Fem.p
+userCategoriesUnited=getUsersCategories()
+userCategoriesUnitedClean={}
+#
+valueUserTopic,usersVectorsClean=findVectorsUsers()
+for u in usersVectorsClean:
+    if not u in userCategoriesUnited:
+        userCategoriesUnited[u]={}
+        userCategoriesUnited[u]["typeOfContribuitor"]="None"
+        userCategoriesUnited[u]["contribuitions"]="None"
+
+        #userCategoriesUnitedClean[u]=userCategoriesUnited[u]
+getClustersParticipants(userCategoriesUnited)
+
+
+        #print "NO found!"+u
+    #else:
+    #    print "not found:"+u
+    #print u
+    #userCategoriesUnited[u]
    # tema=usersVectorsClean[u]
    # for t in tema:
     #    print t+","+str(tema[t])
