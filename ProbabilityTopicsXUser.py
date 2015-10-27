@@ -1,6 +1,7 @@
 import pickle
 import operator
 import json
+import random
 
 users = pickle.load (open ("usersWithTweetsFlor.p","rb"))
 
@@ -79,11 +80,18 @@ def findVectorsUsers():
             if not valueTopic==0:
                 valueUserTopic=float(float(valueUserTopic)/float(valueTopic))
             usersVectors[u][topic]=valueUserTopic
+    usersVectorsClean=usersVectors
+    for u in usersVectors:
+        topicInfluence="Socialinfluence"
+        randomInt=random.randint(0,10)
+        randomInt=randomInt*.1
+        print randomInt
+        usersVectors[u][topicInfluence]=randomInt
 
 
         #print "Topic:"+topic
         #print biggestFrequencyTopic[topic]
-    return usersVectors
+    return usersVectors,usersVectorsClean
 
 
 
@@ -91,16 +99,17 @@ def findVectorsUsers():
 
 def getClustersParticipants():
 
-    usersVectors=findVectorsUsers()
+    valueUserTopic,usersVectorsClean=findVectorsUsers()
     clusters={}
-    for u in usersVectors:
+    for u in usersVectorsClean:
         print "User:"+u
-        topics=usersVectors[u]
+        topics=usersVectorsClean[u]
         sorted_topics = sorted(topics.items(), key=operator.itemgetter(1),reverse=True)
         for t,v in sorted_topics:
             print t +","+str(v)
             clusters.setdefault(t,{})
-            clusters[t][u]=topics
+            topicsClean=valueUserTopic[u]
+            clusters[t][u]=topicsClean
             break
     print 
     print
@@ -110,29 +119,34 @@ def getClustersParticipants():
         json.dump(clusters, outfile)
 
     for c in clusters:
-    
+        print "Cluster:"+c
         people=clusters[c]
         print "Cluster:"+c+","+str(len(clusters[c]))
         for p in people:
-            print p
+            print "people:"+p
+            temas=people[p]
+            for t in temas:
+                print "Tema:"+t
+
         print
+
     topics = {"Politics" : ["impunidad", "aristegui", "bronco", "gobierno",  "autonomia", "autoridad", "ayotzinapa", "2deoctubre", "justicia"], 
           "Feminism" : ["feminicidios", "genero", "feminismo", "feminista", "mujer", "revolucion", "dignidad", "igualdad", "activismo"], 
           "Technology" : ["informatica", "ingenieria", "tecnologia", "nanotecnologia", "tech"], 
           "Health" : ["alimentacion", "medicina", "salud", "sano", "fitness", "gym", "nutricion", "ejercicio", "higiene", "energia"]}
 
-    for t in topics:
-        print t
-        words=topics[t]
-        for w in words:
-            print w
+    #for t in topics:
+     #   print t
+      #  words=topics[t]
+       # for w in words:
+        #    print w
     with open('topics.json', 'w') as outfile:
         json.dump(topics, outfile)
 
 getClustersParticipants()
-#valueUserTopic=findVectorsUsers()
-#for u in valueUserTopic:
- #   print u
-  #  tema=valueUserTopic[u]
+#valueUserTopic,usersVectorsClean=findVectorsUsers()
+#for u in usersVectorsClean:
+#   print u
+   # tema=usersVectorsClean[u]
    # for t in tema:
     #    print t+","+str(tema[t])
